@@ -39,6 +39,13 @@ tree := And(
 This assumes the following predicate was implemented:
 
 ```golang
+func ExpectedValue(value, expected) Predicate {
+    return &expectedValuePredicate{
+        Value: value,
+        Expected: expected,
+    }
+}
+
 type expectedValuePredicate struct {
     Expected string `json:"expected"`
     Value string `json:"value"`
