@@ -27,9 +27,6 @@ func Validate(foo, bar) bool {
 You could represent this as a predicate tree:
 
 ```golang
-foo := "something"
-bar := "somethingElse"
-
 tree := Or(
         Eval(Equals("bar")),
         Eval(Equals("foo")),
