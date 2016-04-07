@@ -1,7 +1,7 @@
-Go Predicate
+Go Predicate Tree
 ============
 
-`go-predicate` is a simple package that implements a basic boolean evaluation tree that can be serialized to json.
+`go-predicate-tree` is a simple package that implements a basic boolean evaluation tree that can be serialized to json.
 
 It allows for custom predicates to be serialized with the tree, preserving relevant state for later evaluation.
 
