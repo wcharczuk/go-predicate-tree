@@ -5,9 +5,12 @@ import "sync"
 var (
 	registryLock = sync.RWMutex{}
 	registry     = map[string]Factory{
-		PredicateTypeTrue:  func() Predicate { return &TruePredicate{} },
-		PredicateTypeFalse: func() Predicate { return &FalsePredicate{} },
-		PredicateEquals:    func() Predicate { return &EqualsPredicate{} },
+		PredicateTypeTrue:        func() Predicate { return &TruePredicate{} },
+		PredicateTypeFalse:       func() Predicate { return &FalsePredicate{} },
+		PredicateEquals:          func() Predicate { return &EqualsPredicate{} },
+		PredicateStringContains:  func() Predicate { return &StringContainsPredicate{} },
+		PredicateStringHasPrefix: func() Predicate { return &StringHasPrefixPredicate{} },
+		PredicateStringHasSuffix: func() Predicate { return &StringHasSuffixPredicate{} },
 	}
 )
 

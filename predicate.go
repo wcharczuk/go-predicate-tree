@@ -1,6 +1,10 @@
 package predicate
 
-import "reflect"
+import (
+	"fmt"
+	"reflect"
+	"strings"
+)
 
 const (
 	// PredicateTypeTrue is the type name for the true predicate.
@@ -11,6 +15,15 @@ const (
 
 	// PredicateEquals is the type name for the equals predicate.
 	PredicateEquals = "equals"
+
+	// PredicateStringContains is the type name for the string contains predicate.
+	PredicateStringContains = "contains"
+
+	// PredicateStringHasPrefix is the type name for the string contains predicate.
+	PredicateStringHasPrefix = "has_prefix"
+
+	// PredicateStringHasSuffix is the type name for the string contains predicate.
+	PredicateStringHasSuffix = "has_suffix"
 )
 
 var (
@@ -81,4 +94,110 @@ func (ep *EqualsPredicate) Evaluate(args ...interface{}) bool {
 // Type returns the type name.
 func (ep *EqualsPredicate) Type() string {
 	return PredicateEquals
+}
+
+// StringContains returns a predicate for strings.Contains.
+func StringContains(value string) Predicate {
+	return &StringContainsPredicate{
+		Value: value,
+	}
+}
+
+// StringContains is the predicate for strings.Contains.
+type StringContainsPredicate struct {
+	Value string `json:"value"`
+}
+
+func (scp *StringContainsPredicate) Type() string {
+	return PredicateStringContains
+}
+
+func (scp *StringContainsPredicate) Evaluate(args ...interface{}) bool {
+	if len(args) == 0 {
+		return false
+	}
+
+	result := true
+	for _, v := range args {
+		if typed, isString := v.(string); isString {
+			result = result && strings.Contains(typed, scp.Value)
+		} else {
+			typed := fmt.Sprintf("%v", v)
+			result = result && strings.Contains(typed, scp.Value)
+		}
+	}
+
+	return result
+}
+
+// HasPrefix is the predicate for strings.HasPrefix.
+func HasPrefix(value string) Predicate {
+	return &StringHasPrefixPredicate{
+		Value: value,
+	}
+}
+
+// StringHasPrefixPredicate is the predicate for strings.HasPrefix.
+type StringHasPrefixPredicate struct {
+	Value string `json:"value"`
+}
+
+// Type returns the predicate type.
+func (shp *StringHasPrefixPredicate) Type() string {
+	return PredicateStringHasPrefix
+}
+
+// Evaluate evaluates the predicate.s
+func (shp *StringHasPrefixPredicate) Evaluate(args ...interface{}) bool {
+	if len(args) == 0 {
+		return false
+	}
+
+	result := true
+	for _, v := range args {
+		if typed, isString := v.(string); isString {
+			result = result && strings.HasPrefix(typed, shp.Value)
+		} else {
+			typed := fmt.Sprintf("%v", v)
+			result = result && strings.HasPrefix(typed, shp.Value)
+		}
+	}
+
+	return result
+}
+
+// HasSuffix returns a predicate for strings.HasSuffix.
+func HasSuffix(value string) Predicate {
+	return &StringHasSuffixPredicate{
+		Value: value,
+	}
+}
+
+// StringHasSuffixPredicate is the predicate for strings.HasSuffix.
+type StringHasSuffixPredicate struct {
+	Value string `json:"value"`
+}
+
+// Type returns the predicate type.
+func (shp *StringHasSuffixPredicate) Type() string {
+	return PredicateStringHasSuffix
+}
+
+// Evaluate evaluates the predicate.s
+func (shp *StringHasSuffixPredicate) Evaluate(args ...interface{}) bool {
+	if len(args) == 0 {
+		return false
+	}
+
+	result := true
+	for _, v := range args {
+		if typed, isString := v.(string); isString {
+			result = result && strings.HasSuffix(typed, shp.Value)
+		} else {
+			typed := fmt.Sprintf("%v", v)
+			result = result && strings.HasSuffix(typed, shp.Value)
+		}
+	}
+
+	return result
 }
