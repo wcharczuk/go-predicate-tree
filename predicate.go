@@ -1,11 +1,16 @@
 package predicate
 
+import "reflect"
+
 const (
 	// PredicateTypeTrue is the type name for the true predicate.
 	PredicateTypeTrue = "true"
 
 	// PredicateTypeFalse is the type name for the false predicate.
 	PredicateTypeFalse = "false"
+
+	// PredicateEquals is the type name for the equals predicate.
+	PredicateEquals = "equals"
 )
 
 var (
@@ -22,14 +27,14 @@ type Predicate interface {
 	Type() string
 
 	// Evaluate runs the predicate.
-	Evaluate() bool
+	Evaluate(args ...interface{}) bool
 }
 
 // TruePredicate is a pre-built predicate that returns true
 type TruePredicate struct{}
 
 // Evaluate returns true
-func (tp *TruePredicate) Evaluate() bool {
+func (tp *TruePredicate) Evaluate(args ...interface{}) bool {
 	return true
 }
 
@@ -42,11 +47,38 @@ func (tp *TruePredicate) Type() string {
 type FalsePredicate struct{}
 
 // Evaluate returns false.
-func (fp *FalsePredicate) Evaluate() bool {
+func (fp *FalsePredicate) Evaluate(args ...interface{}) bool {
 	return false
 }
 
 // Type returns the predicate type.
 func (fp *FalsePredicate) Type() string {
 	return PredicateTypeFalse
+}
+
+// Equals is a simple predicate that evaluates if a value equals something.
+func Equals(value interface{}) Predicate {
+	return &EqualsPredicate{
+		Value: value,
+	}
+}
+
+// EqualsPredicate is a pre-built predicate that tests equality.
+type EqualsPredicate struct {
+	Value interface{} `json:"value"`
+}
+
+// Evaluate returns a bool
+func (ep *EqualsPredicate) Evaluate(args ...interface{}) bool {
+	if len(args) == 0 {
+		return false
+	}
+
+	actual := args[0]
+	return reflect.DeepEqual(ep.Value, actual)
+}
+
+// Type returns the type name.
+func (ep *EqualsPredicate) Type() string {
+	return PredicateEquals
 }

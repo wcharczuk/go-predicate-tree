@@ -19,7 +19,7 @@ func TheBarIsFoo(bar string) bool {
 }
 
 func Validate(foo, bar) bool {
-    return TheFooIsBar(foo) && TheBarIsFoo(bar)
+    return TheFooIsBar(foo) || TheBarIsFoo(bar)
 }
 
 ```
@@ -30,54 +30,28 @@ You could represent this as a predicate tree:
 foo := "something"
 bar := "somethingElse"
 
-tree := And(
-        Eval(ExpectedValue(foo, "bar")),
-        Eval(ExpectedValue(bar, "foo")),
+tree := Or(
+        Eval(Equals("bar")),
+        Eval(Equals("foo")),
     )
 ```
 
-This assumes the following predicate was implemented:
+Note: This uses a pre-built predicate ("Equals") that tests if the first argument passed to `Evaluate(...)` is equal to the given value.
 
-```golang
-func ExpectedValue(value, expected) Predicate {
-    return &expectedValuePredicate{
-        Value: value,
-        Expected: expected,
-    }
-}
-
-type expectedValuePredicate struct {
-    Expected string `json:"expected"`
-    Value string `json:"value"`
-}
-
-func (evp *expectedValuePredicate) Type() {
-    return "expected_value"
-}
-
-func (evp *expectedValuePredicate) Evaluate() bool {
-    return evp.Expected == evp.Value
-}
-```
-
-So that's fine and feels super complicated to do some basic validation.
-
-The power of this comes from serialization. If we register the predicate:
-
-```golang
-predicate.Register("expected_value", func() Predicate { return &expectedValue{} })
-```
+The power of this comes from serialization.
 
 We could then do the following:
 
 ```golang
 blob := Serialize(
-        And (
-            Eval(ExpectedValue(foo, "bar")),
-            Eval(ExpectedValue(bar, "foo")),
+        Or(
+            Eval(Equals("bar")),
+            Eval(Equals("foo")),
         )
     )
 
 tree := predicate.Deserialize(blob)
-fmt.Printf("%v\n", tree.Evaluate())
+fmt.Printf("%v\n", tree.Evaluate("foo")) // "true"
 ```
+
+This does a round trip serialize => deserialize, preserving the 'state' of the predicates, and allowing us to evaluate the tree after deserialization.

@@ -4,21 +4,25 @@ import "sync"
 
 var (
 	registryLock = sync.RWMutex{}
-	registry     = map[string]PredicateFactory{
+	registry     = map[string]Factory{
 		PredicateTypeTrue:  func() Predicate { return &TruePredicate{} },
 		PredicateTypeFalse: func() Predicate { return &FalsePredicate{} },
+		PredicateEquals:    func() Predicate { return &EqualsPredicate{} },
 	}
 )
 
-type PredicateFactory func() Predicate
+// Factory is a method that returns a bare predicate.
+type Factory func() Predicate
 
-func Register(predicateType string, factory PredicateFactory) {
+// Register registers a predicate factory for a given predicate type.
+func Register(predicateType string, factory Factory) {
 	registryLock.Lock()
 	defer registryLock.Unlock()
 
 	registry[predicateType] = factory
 }
 
+// CreatePredicate creates a predicate from a predicate type name.
 func CreatePredicate(predicateType string) Predicate {
 	registryLock.RLock()
 	defer registryLock.RUnlock()

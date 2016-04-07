@@ -14,7 +14,7 @@ func (cp customPredicate) Type() string {
 	return "custom_predicate"
 }
 
-func (cp customPredicate) Evaluate() bool {
+func (cp customPredicate) Evaluate(args ...interface{}) bool {
 	return len(cp.StateValue) != 0
 }
 

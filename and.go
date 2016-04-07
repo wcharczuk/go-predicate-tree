@@ -31,10 +31,10 @@ func (an *AndNode) AddChild(node Node) {
 	an.children = append(an.children, node)
 }
 
-func (an *AndNode) Evaluate() bool {
+func (an *AndNode) Evaluate(args ...interface{}) bool {
 	result := true
 	for _, n := range an.children {
-		result = result && n.Evaluate()
+		result = result && n.Evaluate(args...)
 	}
 	return result
 }

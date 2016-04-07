@@ -28,8 +28,8 @@ func (en EvalNode) Children() []Node {
 
 func (en EvalNode) AddChild(node Node) {}
 
-func (en *EvalNode) Evaluate() bool {
-	return en.Predicate.Evaluate()
+func (en *EvalNode) Evaluate(args ...interface{}) bool {
+	return en.Predicate.Evaluate(args...)
 }
 
 func (en *EvalNode) String() string {

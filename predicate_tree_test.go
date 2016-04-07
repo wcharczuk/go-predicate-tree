@@ -49,3 +49,16 @@ func TestSerialize(t *testing.T) {
 	assert.NotNil(deserialized)
 	assert.True(deserialized.Evaluate())
 }
+
+func TestArguments(t *testing.T) {
+	assert := assert.New(t)
+
+	tree := Or(
+		Eval(Equals("foo")),
+		Eval(Equals("bar")),
+	)
+
+	assert.True(tree.Evaluate("foo"))
+	assert.True(tree.Evaluate("bar"))
+	assert.False(tree.Evaluate("baz"))
+}

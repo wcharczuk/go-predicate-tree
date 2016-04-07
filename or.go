@@ -31,10 +31,10 @@ func (on *OrNode) AddChild(node Node) {
 	on.children = append(on.children, node)
 }
 
-func (on *OrNode) Evaluate() bool {
+func (on *OrNode) Evaluate(args ...interface{}) bool {
 	result := false
 	for _, n := range on.children {
-		result = result || n.Evaluate()
+		result = result || n.Evaluate(args...)
 	}
 	return result
 }

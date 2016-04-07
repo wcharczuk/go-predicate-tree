@@ -28,8 +28,8 @@ func (nn *NotNode) AddChild(node Node) {
 	nn.child = node
 }
 
-func (nn *NotNode) Evaluate() bool {
-	return !nn.child.Evaluate()
+func (nn *NotNode) Evaluate(args ...interface{}) bool {
+	return !nn.child.Evaluate(args...)
 }
 
 func (nn *NotNode) String() string {

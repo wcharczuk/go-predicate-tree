@@ -5,6 +5,7 @@ type Node interface {
 	Type() string
 	AddChild(node Node)
 	Children() []Node
-	Evaluate() bool
 	String() string
+
+	Evaluate(args ...interface{}) bool
 }
