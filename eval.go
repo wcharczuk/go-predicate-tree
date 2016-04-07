@@ -1,6 +1,10 @@
 package predicate
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/blendlabs/go-util"
+)
 
 const (
 	NodeTypeEval = "eval"
@@ -8,14 +12,24 @@ const (
 
 func Eval(predicate Predicate) *EvalNode {
 	return &EvalNode{
-		PredicateType: predicate.Type(),
-		Predicate:     predicate,
+		id:            util.UUIDv4().ToShortString(),
+		predicateType: predicate.Type(),
+		predicate:     predicate,
 	}
 }
 
 type EvalNode struct {
-	PredicateType string
-	Predicate     Predicate
+	id            string
+	predicateType string
+	predicate     Predicate
+}
+
+func (en EvalNode) ID() string {
+	return en.id
+}
+
+func (en *EvalNode) SetID(id string) {
+	en.id = id
 }
 
 func (en EvalNode) Type() string {
@@ -28,10 +42,12 @@ func (en EvalNode) Children() []Node {
 
 func (en EvalNode) AddChild(node Node) {}
 
+func (en EvalNode) RemoveChild(nodeID string) {}
+
 func (en *EvalNode) Evaluate(args ...interface{}) bool {
-	return en.Predicate.Evaluate(args...)
+	return en.predicate.Evaluate(args...)
 }
 
 func (en *EvalNode) String() string {
-	return fmt.Sprintf("EVAL(%s)", en.PredicateType)
+	return fmt.Sprintf("EVAL(%s)", en.predicateType)
 }

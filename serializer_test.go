@@ -45,13 +45,14 @@ func TestSerializerWithCustomPredicate(t *testing.T) {
 	typed, isTyped := deserialized.(*OrNode)
 	assert.True(isTyped)
 	assert.NotNil(typed)
+	assert.NotEmpty(typed.ID())
 	assert.NotEmpty(typed.Children())
 
 	evalNode, isEvalNode := typed.Children()[0].(*EvalNode)
 	assert.True(isEvalNode)
 	assert.NotNil(evalNode)
 
-	predicate, isPredicate := evalNode.Predicate.(*customPredicate)
+	predicate, isPredicate := evalNode.predicate.(*customPredicate)
 	assert.True(isPredicate)
 	assert.NotNil(predicate)
 

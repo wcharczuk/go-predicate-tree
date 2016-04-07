@@ -1,6 +1,10 @@
 package predicate
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/blendlabs/go-util"
+)
 
 const (
 	NodeTypeNot = "not"
@@ -8,12 +12,22 @@ const (
 
 func Not(node Node) *NotNode {
 	return &NotNode{
+		id:    util.UUIDv4().ToShortString(),
 		child: node,
 	}
 }
 
 type NotNode struct {
-	child Node `json:"child"`
+	id    string
+	child Node
+}
+
+func (nn NotNode) ID() string {
+	return nn.id
+}
+
+func (nn *NotNode) SetID(id string) {
+	nn.id = id
 }
 
 func (nn NotNode) Type() string {
@@ -26,6 +40,10 @@ func (nn NotNode) Children() []Node {
 
 func (nn *NotNode) AddChild(node Node) {
 	nn.child = node
+}
+
+func (nn *NotNode) RemoveChild(nodeID string) {
+	nn.child = nil
 }
 
 func (nn *NotNode) Evaluate(args ...interface{}) bool {

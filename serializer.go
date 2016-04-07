@@ -7,6 +7,7 @@ import (
 )
 
 const (
+	GraphFieldID             = "id"
 	GraphFieldType           = "type"
 	GraphFieldChildren       = "children"
 	GraphFieldPredicateType  = "predicate_type"
@@ -34,19 +35,21 @@ func umarshalIntermediateNode(graph *intermediateNode) Node {
 
 	node := createNodeByType(nodeType)
 
+	node.SetID(graph.ID)
+
 	switch nodeType {
 	case NodeTypeEval:
 		{
 			if typed, isTyped := node.(*EvalNode); isTyped {
-				typed.PredicateType = graph.PredicateType
-				predicate := CreatePredicate(typed.PredicateType)
+				typed.predicateType = graph.PredicateType
+				predicate := CreatePredicate(typed.predicateType)
 				if len(graph.Predicate) != 0 {
 					err := json.Unmarshal(graph.Predicate, predicate)
 					if err == nil {
-						typed.Predicate = predicate
+						typed.predicate = predicate
 					}
 				}
-				typed.Predicate = predicate
+				typed.predicate = predicate
 				return typed
 			}
 		}
@@ -81,6 +84,7 @@ func serializeGraph(node Node) (map[string]interface{}, error) {
 	nodeType := node.Type()
 	children := node.Children()
 
+	graphNode[GraphFieldID] = node.ID()
 	graphNode[GraphFieldType] = nodeType
 
 	// custom steps for specific node types.
@@ -88,9 +92,9 @@ func serializeGraph(node Node) (map[string]interface{}, error) {
 	case NodeTypeEval:
 		{
 			if evalNode, isEvalNode := node.(*EvalNode); isEvalNode {
-				graphNode[GraphFieldPredicateType] = evalNode.PredicateType
-				if evalNode.Predicate != nil {
-					graphNode[GraphFieldPredicateState] = evalNode.Predicate
+				graphNode[GraphFieldPredicateType] = evalNode.predicateType
+				if evalNode.predicate != nil {
+					graphNode[GraphFieldPredicateState] = evalNode.predicate
 				}
 			} else {
 				return nil, exception.New("Node Type Value: `eval` but incorrect type assertion.")
@@ -122,6 +126,7 @@ func deserializeGraph(data []byte) (*intermediateNode, error) {
 }
 
 type intermediateNode struct {
+	ID            string              `json:"id"`
 	Type          string              `json:"type"`
 	Children      []*intermediateNode `json:"children"`
 	PredicateType string              `json:"predicate_type"`

@@ -27,23 +27,25 @@ func Validate(foo, bar string) bool {
 You could represent this as a predicate tree:
 
 ```golang
-tree := Or(
-        Eval(Equals("bar")),
-        Eval(Equals("foo")),
+import q "github.com/wcharczuk/go-predicate-tree"
+
+tree := q.Or(
+        q.Eval(q.Equals("bar")),
+        q.Eval(q.Equals("foo")),
     )
 ```
 
-Note: This uses a pre-built predicate ("Equals") that tests if the first argument passed to `Evaluate(...)` is equal to the given value.
+Note: This uses a pre-built predicate ("q.Equals") that tests if the first argument passed to `Evaluate(...)` is equal to the given value.
 
 The power of this comes from serialization.
 
 We could then do the following:
 
 ```golang
-blob := Serialize(
-        Or(
-            Eval(Equals("bar")),
-            Eval(Equals("foo")),
+blob := q.Serialize(
+        q.Or(
+            q.Eval(q.Equals("bar")),
+            q.Eval(q.Equals("foo")),
         )
     )
 
