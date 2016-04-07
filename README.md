@@ -18,7 +18,7 @@ func TheBarIsFoo(bar string) bool {
     return bar == "foo"
 }
 
-func Validate(foo, bar) bool {
+func Validate(foo, bar string) bool {
     return TheFooIsBar(foo) || TheBarIsFoo(bar)
 }
 
