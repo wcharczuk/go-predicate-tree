@@ -49,7 +49,7 @@ blob := q.Serialize(
         )
     )
 
-tree := predicate.Deserialize(blob)
+tree := q.Deserialize(blob)
 fmt.Printf("%v\n", tree.Evaluate("foo")) // "true"
 ```
 
